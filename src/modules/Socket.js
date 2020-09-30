@@ -28,7 +28,7 @@ export default class Socket {
 
             socket.on('online', () => {
 
-                _this.respondAllSockets({"Client_Count":_this.client_count,"Clients":_this.clients})
+                _this.respondAllSockets({"Client_Count":_this.client_count})
             })
 
             socket.on('disconnect', () => {
