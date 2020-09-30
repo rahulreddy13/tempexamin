@@ -1,28 +1,27 @@
 <div id="status"></div>
 <div id='count'></div>
-<button onclick="Online()">Get Online Users</button>
 <script>
         let socket = io.connect(`http://webvue.org/admin`)
 
-        function Online(){
+        setInterval(function(){
+            socket.emit('online');
+        },1000)
 
-            socket.emit('online')
-        }
 
         socket.on('connect', function(){
             let element = document.getElementById('status')
-            element.innerHTML += ' Connected    - ';
+            element.innerHTML = ' Connected    - ';
         });
 
         socket.on('response', function(doc){
             let element = document.getElementById('count')
-            element.innerHTML = doc.Client_Count;
+            element.innerHTML = `Online Users : ${doc.Client_Count}`;
         });
 
 
         socket.on('disconnect', function(){
 
             let element = document.getElementById('status')
-            element.innerHTML += ' Disonnected';
+            element.innerHTML = ' Disonnected';
         });
 </script>
