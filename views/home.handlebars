@@ -1,10 +1,20 @@
 <div id="status"></div>
+<button onclick="Online()">Get Online Users</button>
 <script>
-        let socket = io.connect(`http://localhost:8009/admin`)
+        let socket = io.connect(`http://webvue.org/admin`)
+
+        function Online(){
+
+            socket.emit('online')
+        }
 
         socket.on('connect', function(){
             let element = document.getElementById('status')
             element.innerHTML += ' Connected    - ';
+        });
+
+        socket.on('reponse', function(doc){
+            console.log(doc)
         });
 
 

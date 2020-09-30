@@ -21,10 +21,15 @@ export default class Socket {
 
         this.io.of('/admin').on('connect', (socket) => {
 
-            console.log("Connected " + socket.id)
+            console.log(`Connected - ${socket.id}`)
             console.log(this.client_count)
             this.clients.push(socket);
             this.client_count++;
+
+            socket.on('online', () => {
+
+                _this.respondAllSockets({"Client_Count":_this.client_count,"Clients":_this.clients})
+            })
 
             socket.on('disconnect', () => {
 
@@ -32,7 +37,7 @@ export default class Socket {
                 _this.clients.splice(index,1)
                 _this.client_count--
                 console.log(_this.client_count)
-                console.log("Disconnected " + socket.id)
+                console.log(`Disconnected - ${socket.id}`)
             });
 
         
