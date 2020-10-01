@@ -1,27 +1,46 @@
 <div id="status"></div>
 <div id='count'></div>
+<div id='countOff'></div>
+<div id='countTotal'></div>
+
+<button onclick="ClearCounter()">Reset Counter</button>
 <script>
-        let socket = io.connect(`http://webvue.org/admin`)
+    let socket = io.connect(`http://localhost:8009/admin`,{ query: `user_id=${Math.round((Math.pow(36, 8 + 1) - Math.random() * Math.pow(36, 8))).toString(36).slice(1).toUpperCase()}` })
+    let handle = null
 
-        setInterval(function(){
-            socket.emit('online');
-        },1000)
+    socket.on('connect', function(){
+        let element = document.getElementById('status')
+        element.innerHTML = ' Connected';
+        document.title = 'Connected'
+        handle = setInterval(EmitOnline,1000)
+    });
+
+    socket.on('response', function(doc){
+        let element = document.getElementById('count')
+        element.innerHTML = `Online Users : ${doc.Client_Online}`;
+        let element1 = document.getElementById('countOff')
+        element1.innerHTML = `Offline Users: ${doc.Client_Offline}`;
+        let element2 = document.getElementById('countTotal')
+        element2.innerHTML = `Total Users: ${doc.Clients.length}`;
+    });
+
+    socket.on('close-window',() =>{
+       console.log("Close Window")
+    })
+
+    socket.on('disconnect', function(){
+        let element = document.getElementById('status')
+        element.innerHTML = ' Disconnected';
+        document.title = 'Disconnected'
+        clearInterval(handle);
+    });
 
 
-        socket.on('connect', function(){
-            let element = document.getElementById('status')
-            element.innerHTML = ' Connected    - ';
-        });
+    function EmitOnline(){
+        socket.emit('online');
+    }
 
-        socket.on('response', function(doc){
-            let element = document.getElementById('count')
-            element.innerHTML = `Online Users : ${doc.Client_Count}`;
-        });
-
-
-        socket.on('disconnect', function(){
-
-            let element = document.getElementById('status')
-            element.innerHTML = ' Disonnected';
-        });
+    function ClearCounter(){
+        socket.emit('clear-counter')
+    }
 </script>
